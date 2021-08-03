@@ -1,0 +1,56 @@
+---
+version: "3.7"
+
+volumes:
+  { mysql_data, drupal-modules, drupal-profiles, drupal-sites, drupal-themes }
+
+services:
+  drupal:
+    image: drupal:${DRUPAL_VERSION}
+    container_name: drupal
+    restart: always
+    environment: []
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - type: volume
+        source: drupal-modules
+        target: /var/www/html/modules
+        read_only: false
+      - type: volume
+        source: drupal-profiles
+        target: /var/www/html/profiles
+        read_only: false
+      - type: volume
+        source: drupal-sites
+        target: /var/www/html/sites
+        read_only: false
+      - type: volume
+        source: drupal-themes
+        target: /var/www/html/themes
+        read_only: false
+    depends_on: [db]
+
+  db:
+    image: mysql:${MYSQL_VERSION}
+    container_name: drupal_mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=mysql
+    ports: []
+    volumes:
+      - type: volume
+        source: mysql_data
+        target: /var/lib/mysql
+        read_only: false
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: drupal_phpmyadmin
+    restart: always
+    environment:
+      - PMA_HOST=db
+    ports:
+      - 8080:80
+    volumes: []

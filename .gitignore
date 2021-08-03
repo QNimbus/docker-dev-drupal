@@ -1,0 +1,5 @@
+# Ignore SQL dump files
+*.sql
+
+# Always include .gitkeep
+!.gitkeep
